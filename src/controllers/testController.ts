@@ -7,14 +7,11 @@ export async function getTerms(req: Request, res: Response) {
     res.send(terms)
 }
 
-// export async function getDisciplines(req: Request, res: Response) {
-//     const termId = parseInt(req.params.termId)
-//     validateId(termId)
+export async function getByTeacher(req: Request, res: Response) {
+    const teachers = await testService.getByTeacher()
 
-//     const disciplines = await testService.getDisciplines(termId)
-
-//     res.send(disciplines)
-// }
+    res.send(teachers)
+}
 
 export async function getTests(req: Request, res: Response) {
     const disciId = parseInt(req.params.disciId)

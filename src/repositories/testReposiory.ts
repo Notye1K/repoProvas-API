@@ -21,11 +21,26 @@ export async function findTerms() {
     })
 }
 
-// export async function findDisciplines(termId: number) {
-//     return await client.discipline.findMany({
-//         where: { termId },
-//     })
-// }
+export async function findTeachers() {
+    return await client.teacher.findMany()
+}
+
+export async function findCategories() {
+    return await client.category.findMany({
+        include: {
+            tests: {
+                include: {
+                    teacherDiscipline: {
+                        include: {
+                            teacher: true,
+                            discipline: true,
+                        },
+                    },
+                },
+            },
+        },
+    })
+}
 
 export interface Test {
     categoryName: string
