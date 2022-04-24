@@ -15,6 +15,9 @@ export async function login(body: CreateUser) {
     return user
 }
 
+export async function find(token: { id: number; email: string }) {
+    return await userRepository.findByToken(token)
+}
 
 async function validateEmail(email: string) {
     const user = await userRepository.findOne(email)

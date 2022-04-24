@@ -12,3 +12,9 @@ export async function create(body: CreateUser) {
         data: { ...body },
     })
 }
+
+export async function findByToken(token: { id: number; email: string }) {
+    return await client.user.findFirst({
+        where: { ...token },
+    })
+}

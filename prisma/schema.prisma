@@ -52,6 +52,7 @@ model Test {
   categoryId          Int
   teacherDiscipline   TeacherDiscipline @relation(fields: [teacherDisciplineId], references: [id])
   teacherDisciplineId Int
+  createdAt           DateTime          @default(now())
 
   @@map("tests")
 }
