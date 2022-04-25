@@ -19,11 +19,29 @@ export async function find(token: { id: number; email: string }) {
     return await userRepository.findByToken(token)
 }
 
+export async function loginGit(email: string) {
+    const user = await validateEmailGit(email)
+    if (user) {
+        return user
+    }
+    await userRepository.create({ email, password: 'git' })
+
+    return await findEmail(email)
+}
+
 async function validateEmail(email: string) {
     const user = await userRepository.findOne(email)
     if (user) {
         throw { type: 'user', status: 409, message: 'email already exist' }
     }
+}
+
+async function validateEmailGit(email: string) {
+    const user = await userRepository.findOne(email)
+    if (user) {
+        return user
+    }
+    return false
 }
 
 function changePassword(body: CreateUser) {

@@ -12,5 +12,6 @@ userRouter.post(
     userController.createUser
 )
 userRouter.post('/login', validateSchema(registerSchema), userController.login)
+userRouter.post('/login/github', userController.loginGithub)
 
 export default userRouter
