@@ -3,11 +3,6 @@ import app from '../app'
 import client from '../database'
 import * as userFactory from './factories/userFactory'
 
-const body = {
-    email: 'test@example.com',
-    password: 'test',
-}
-
 describe('POST /login', () => {
     beforeEach(async () => {
         await client.$queryRaw`TRUNCATE TABLE users`
@@ -17,7 +12,9 @@ describe('POST /login', () => {
     it('given a valid body it should return a token', async () => {
         await userFactory.createUser()
 
-        const result = await supertest(app).post('/login').send(body)
+        const result = await supertest(app)
+            .post('/login')
+            .send(userFactory.body)
 
         expect(typeof result.text).toBe('string')
         expect(result.statusCode).toBe(200)
@@ -37,7 +34,9 @@ describe('POST /register', () => {
     })
 
     it('given a valid body it should return 201', async () => {
-        const result = await supertest(app).post('/register').send(body)
+        const result = await supertest(app)
+            .post('/register')
+            .send(userFactory.body)
 
         expect(result.statusCode).toBe(201)
     })
@@ -46,7 +45,7 @@ describe('POST /register', () => {
         await userFactory.createUser()
 
         const result = await client.user.findUnique({
-            where: { email: body.email },
+            where: { email: userFactory.body.email },
         })
         expect(result).not.toBeNull()
     })
