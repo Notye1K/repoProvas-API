@@ -12,5 +12,6 @@ testRouter.get(
     validateToken,
     testController.getTests
 )
+testRouter.patch('/tests/:testId', validateToken, testController.incView)
 
 export default testRouter

@@ -22,6 +22,16 @@ export async function getTests(req: Request, res: Response) {
     res.send(tests)
 }
 
+export async function incView(req: Request, res: Response) {
+    const testId = parseInt(req.params.testId)
+    validateId(testId)
+
+    await testService.incView(testId)
+
+    res.sendStatus(200)
+}
+
+
 function validateId(id: number) {
     if (id < 1 || isNaN(id)) {
         throw { type: 'user', message: 'invalid id', status: 422 }

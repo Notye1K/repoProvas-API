@@ -61,3 +61,14 @@ export async function findTests(disciId: number): Promise<Test[]> {
     WHERE td."disciplineId"=${disciId}
     `
 }
+
+export async function incView(testId: number) {
+    await client.test.update({
+        where: { id: testId },
+        data: {
+            views: {
+                increment: 1,
+            },
+        },
+    })
+}

@@ -68,3 +68,7 @@ export async function getTests(disciId: number) {
     })
     return arr
 }
+
+export async function incView(testId: number) {
+    await testReposiory.incView(testId)
+}
