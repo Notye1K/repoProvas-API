@@ -31,6 +31,31 @@ export async function incView(req: Request, res: Response) {
     res.sendStatus(200)
 }
 
+export async function getCategories(req: Request, res: Response) {
+    const categories = await testService.getCategories()
+
+    res.send(categories)
+}
+
+export async function getDisciplines(req: Request, res: Response) {
+    const disciplenes = await testService.getDisciplines()
+
+    res.send(disciplenes)
+}
+
+export async function getTeachersByDiscipline(req: Request, res: Response) {
+    const disciId = parseInt(req.params.disciId)
+    validateId(disciId)
+
+    const disciplenes = await testService.getTeachersByDiscipline(disciId)
+
+    res.send(disciplenes)
+}
+
+export async function createTest(req: Request, res: Response) {
+    await testService.createTest(req.body)
+    res.sendStatus(201)
+}
 
 function validateId(id: number) {
     if (id < 1 || isNaN(id)) {

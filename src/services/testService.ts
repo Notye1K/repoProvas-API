@@ -1,5 +1,6 @@
 import { Discipline, Teacher, TeacherDiscipline, Test } from '@prisma/client'
 import * as testReposiory from '../repositories/testReposiory.js'
+import { CreateTest } from '../schemas/testSchema.js'
 
 export async function getTerms() {
     return await testReposiory.findTerms()
@@ -71,4 +72,24 @@ export async function getTests(disciId: number) {
 
 export async function incView(testId: number) {
     await testReposiory.incView(testId)
+}
+
+export async function getCategories() {
+    return testReposiory.getCategories()
+}
+
+export async function getDisciplines() {
+    return testReposiory.getDisciplines()
+}
+
+export async function getTeachersByDiscipline(disciId: number) {
+    return testReposiory.getTeachersByDiscipline(disciId)
+}
+
+export async function createTest(body: CreateTest) {
+    const teacherDiscipline = await testReposiory.findTeacherDiscipline(
+        body.instructor,
+        body.discipline
+    )
+    await testReposiory.createTest(body, teacherDiscipline.id)
 }

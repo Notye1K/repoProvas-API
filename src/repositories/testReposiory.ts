@@ -1,4 +1,5 @@
 import client from '../database.js'
+import { CreateTest } from '../schemas/testSchema.js'
 
 export async function findTerms() {
     return await client.term.findMany({
@@ -69,6 +70,41 @@ export async function incView(testId: number) {
             views: {
                 increment: 1,
             },
+        },
+    })
+}
+
+export async function getCategories() {
+    return client.category.findMany()
+}
+
+export async function getDisciplines() {
+    return client.discipline.findMany()
+}
+
+export async function getTeachersByDiscipline(disciId: number) {
+    return client.teacher.findMany({
+        where: { teacherDiscipline: { some: { disciplineId: disciId } } },
+    })
+}
+
+export async function findTeacherDiscipline(
+    teacherId: number,
+    disciId: number
+) {
+    return client.teacherDiscipline.findFirst({
+        select: { id: true },
+        where: { teacherId, disciplineId: disciId },
+    })
+}
+
+export async function createTest(body: CreateTest, teacherDiscipline: number) {
+    await client.test.create({
+        data: {
+            name: body.title,
+            pdfUrl: body.pdf,
+            categoryId: body.category,
+            teacherDisciplineId: teacherDiscipline,
         },
     })
 }
