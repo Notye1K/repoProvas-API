@@ -2,13 +2,14 @@ import supertest from 'supertest'
 import app from '../app'
 import client from '../database'
 import * as userFactory from './factories/userFactory'
+import * as testFactory from './factories/testFactory'
+
+beforeEach(async () => {
+    await client.$queryRaw`TRUNCATE TABLE users`
+    await client.$disconnect()
+})
 
 describe('POST /login', () => {
-    beforeEach(async () => {
-        await client.$queryRaw`TRUNCATE TABLE users`
-        await client.$disconnect()
-    })
-
     it('given a valid body it should return a token', async () => {
         await userFactory.createUser()
 
@@ -28,11 +29,6 @@ describe('POST /login', () => {
 })
 
 describe('POST /register', () => {
-    beforeEach(async () => {
-        await client.$queryRaw`TRUNCATE TABLE users`
-        await client.$disconnect()
-    })
-
     it('given a valid body it should return 201', async () => {
         const result = await supertest(app)
             .post('/register')
@@ -54,5 +50,39 @@ describe('POST /register', () => {
         const result = await supertest(app).post('/register').send({})
 
         expect(result.statusCode).toBe(422)
+    })
+})
+
+describe('PATCH /tests/:testId', () => {
+    it('given a valid headers it should return 200', async () => {
+        const token = await testFactory.getToken()
+
+        const { id } = await testFactory.createTest()
+
+        const { views: before } = await testFactory.getTest(id)
+
+        const result = await supertest(app)
+            .patch(`/tests/${id}`)
+            .set('Authorization', `Bearer ${token}`)
+
+        const { views: after } = await testFactory.getTest(id)
+
+        expect(result.statusCode).toBe(200)
+        expect(after).toBeGreaterThan(before)
+    })
+
+    it('given a invalid headers it should return 401', async () => {
+        const { id } = await testFactory.createTest()
+
+        const { views: before } = await testFactory.getTest(id)
+
+        const result = await supertest(app)
+            .patch(`/tests/${id}`)
+            .set('Authorization', `Bearer sdhf`)
+
+        const { views: after } = await testFactory.getTest(id)
+
+        expect(result.statusCode).toBe(401)
+        expect(after).toBe(before)
     })
 })

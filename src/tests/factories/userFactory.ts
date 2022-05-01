@@ -3,7 +3,7 @@ import app from '../../app'
 import { faker } from '@faker-js/faker'
 
 export async function createUser() {
-    await supertest(app)
+    return await supertest(app)
         .post('/register')
         .send({
             ...body,

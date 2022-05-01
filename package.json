@@ -7,7 +7,10 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i"
+    "test": "dotenv -e .env.test npx prisma db seed && NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
