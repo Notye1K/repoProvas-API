@@ -54,7 +54,7 @@ describe('POST /register', () => {
 })
 
 describe('PATCH /tests/:testId', () => {
-    it('given a valid headers it should return 200', async () => {
+    it('given a valid headers it should return 200. And test side effect', async () => {
         const token = await testFactory.getToken()
 
         const { id } = await testFactory.createTest()
@@ -71,7 +71,7 @@ describe('PATCH /tests/:testId', () => {
         expect(after).toBeGreaterThan(before)
     })
 
-    it('given a invalid headers it should return 401', async () => {
+    it('given a invalid headers it should return 401. And test side effect', async () => {
         const { id } = await testFactory.createTest()
 
         const { views: before } = await testFactory.getTest(id)
@@ -83,6 +83,75 @@ describe('PATCH /tests/:testId', () => {
         const { views: after } = await testFactory.getTest(id)
 
         expect(result.statusCode).toBe(401)
+        expect(after).toBe(before)
+    })
+})
+
+describe('POST /tests', () => {
+    it('given a valid body and a valid token it should return 201. And test side effect', async () => {
+        const body = {
+            title: 'title',
+            pdf: 'pdf',
+            category: 1,
+            discipline: 1,
+            instructor: 1,
+        }
+
+        const token = await testFactory.getToken()
+
+        const before = (await testFactory.getTests()).length
+
+        const result = await supertest(app)
+            .post(`/tests`)
+            .send(body)
+            .set('Authorization', `Bearer ${token}`)
+
+        const after = (await testFactory.getTests()).length
+
+        expect(result.statusCode).toBe(201)
+        expect(after).toBeGreaterThan(before)
+    })
+
+    it('given a valid body and a invalid token it should return 401. And test side effect', async () => {
+        const body = {
+            title: 'title',
+            pdf: 'pdf',
+            category: 1,
+            discipline: 1,
+            instructor: 1,
+        }
+
+        const before = (await testFactory.getTests()).length
+
+        const result = await supertest(app)
+            .post(`/tests`)
+            .send(body)
+            .set('Authorization', `Bearer sdfg`)
+
+        const after = (await testFactory.getTests()).length
+
+        expect(result.statusCode).toBe(401)
+        expect(after).toBe(before)
+    })
+
+    it('given a invalid body and a valid token it should return 422. And test side effect', async () => {
+        const body = {
+            title: 'title',
+            pdf: 5,
+        }
+
+        const token = await testFactory.getToken()
+
+        const before = (await testFactory.getTests()).length
+
+        const result = await supertest(app)
+            .post(`/tests`)
+            .send(body)
+            .set('Authorization', `Bearer ${token}`)
+
+        const after = (await testFactory.getTests()).length
+
+        expect(result.statusCode).toBe(422)
         expect(after).toBe(before)
     })
 })

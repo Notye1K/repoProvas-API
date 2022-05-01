@@ -38,3 +38,7 @@ export async function getTest(id: number) {
         where: { id },
     })
 }
+
+export async function getTests() {
+    return await client.test.findMany()
+}
