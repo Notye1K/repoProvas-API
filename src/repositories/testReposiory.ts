@@ -108,3 +108,21 @@ export async function createTest(body: CreateTest, teacherDiscipline: number) {
         },
     })
 }
+
+export async function findTeacherById(id: number) {
+    return await client.teacher.findUnique({
+        where: { id },
+    })
+}
+
+export async function findCategoryById(id: number) {
+    return await client.category.findUnique({
+        where: { id },
+    })
+}
+
+export async function findDisciplineById(id: number) {
+    return await client.discipline.findUnique({
+        where: { id },
+    })
+}

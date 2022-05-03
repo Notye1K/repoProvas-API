@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import multer from 'multer'
 
 import * as testService from '../services/testService.js'
 
@@ -52,8 +53,11 @@ export async function getTeachersByDiscipline(req: Request, res: Response) {
     res.send(disciplenes)
 }
 
+//const upload = multer({ dest: 'Documentos/' })
+
 export async function createTest(req: Request, res: Response) {
     await testService.createTest(req.body)
+    //upload.single(req.body.title)
     res.sendStatus(201)
 }
 

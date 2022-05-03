@@ -18,3 +18,9 @@ export async function findByToken(token: { id: number; email: string }) {
         where: { ...token },
     })
 }
+
+export async function findUsersMails() {
+    return await client.user.findMany({
+        select: { email: true },
+    })
+}

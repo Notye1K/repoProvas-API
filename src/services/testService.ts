@@ -1,6 +1,7 @@
-import { Discipline, Teacher, TeacherDiscipline, Test } from '@prisma/client'
 import * as testReposiory from '../repositories/testReposiory.js'
 import { CreateTest } from '../schemas/testSchema.js'
+import nodemailer from 'nodemailer'
+import { findUsersMails } from '../repositories/userRepository.js'
 
 export async function getTerms() {
     return await testReposiory.findTerms()
@@ -92,4 +93,48 @@ export async function createTest(body: CreateTest) {
         body.discipline
     )
     await testReposiory.createTest(body, teacherDiscipline.id)
+
+    await sendEmail(body)
+}
+
+
+async function sendEmail(body: CreateTest) {
+    const transport = nodemailer.createTransport({
+        host: 'smtp.mailtrap.io',
+        port: 2525,
+        auth: {
+            user: '5bcac34d2b98a0',
+            pass: '660f4fb7f08f59',
+        },
+        pool: true,
+        maxConnections: 1,
+        rateDelta: 20000,
+        rateLimit: 5,
+    })
+
+    const users = await findUsersMails()
+    const teacher = await testReposiory.findTeacherById(body.instructor)
+    const category = await testReposiory.findCategoryById(body.category)
+    const discipline = await testReposiory.findDisciplineById(body.discipline)
+
+    users.map((user) => {
+        const message = {
+            from: 'sender@server.com',
+            to: user.email,
+            subject: 'Uma nova prova foi criada',
+            text: `A seguinte prova foi adicionadas: ${teacher.name} ${
+                category.name
+            } ${new Date().getFullYear()} - ${body.title} (${discipline.name})`,
+            html: `<p>A seguinte prova foi adicionadas: ${teacher.name} ${
+                category.name
+            } ${new Date().getFullYear()} - ${body.title} (${
+                discipline.name
+            })</p>`,
+        }
+        transport.sendMail(message, (err) => {
+            if (err) {
+                console.error(err)
+            }
+        })
+    })
 }
